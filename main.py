@@ -39,13 +39,16 @@ sending_bin = config["bin_database_url"] + "/" + metadata["provider"] + "_" + me
 logger.info("Sendind data to: " + sending_bin)
 
 # read benchmark file
-with open(str(Path.home()) + "/" + config["benchmark_file"]) as json_file:
-    payload = json.load(json_file)
+try:
+    with open(str(Path.home()) + "/" + config["benchmark_file"]) as json_file:
+        payload = json.load(json_file)
 
-# send data
-logger.info("Sending payload: " + json.dumps(payload, indent=2) + " to " + sending_bin)
-response = requests.post(sending_bin, json.dumps(payload), headers={'content-type': 'application/json'})
-logger.info(response.text)
+    # send data
+    logger.info("Sending payload: " + json.dumps(payload, indent=2) + " to " + sending_bin)
+    response = requests.post(sending_bin, json.dumps(payload), headers={'content-type': 'application/json'})
+    logger.info(response.text)
+except Exception as e:
+    logger.error(e)
 
 # stop
 if args.stop:
