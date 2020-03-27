@@ -4,8 +4,12 @@ import requests
 import yaml
 import logging
 import coloredlogs
+import os
 from pathlib import Path
 from metadata import Metadata
+
+CONFIG_FILE = "config_benchmark_tools.yml"
+INSTANCE_FILE = "instance_metadata.yml"
 
 # setup logger
 logger = logging.getLogger(__name__)
@@ -19,13 +23,13 @@ parser.set_defaults(stop=False)
 args = parser.parse_args()
 
 # read configuration file
-with open("config_benchmark_tools.yml", 'r') as file:
+with open(CONFIG_FILE, 'r') as file:
     data = file.read()
     config = yaml.load(data, Loader=yaml.FullLoader)
 
 try:
     # check if instance metadata file exists
-    with open("instance_metadata.yml", 'r') as file:
+    with open(INSTANCE_FILE, 'r') as file:
         data = file.read()
         metadata = yaml.load(data, Loader=yaml.FullLoader)
 except IOError:
@@ -40,8 +44,13 @@ logger.info("Sendind data to: " + sending_bin)
 
 # read benchmark file
 try:
-    with open(str(Path.home()) + "/" + config["benchmark_file"]) as json_file:
+    bench_file = str(Path.home()) + "/" + config["benchmark_file"]
+    with open(bench_file) as json_file:
         payload = json.load(json_file)
+
+    # delete the file
+    os.remove(bench_file)
+    logger.info("File deleted")
 
     # send data
     logger.info("Sending payload: " + json.dumps(payload, indent=2) + " to " + sending_bin)
