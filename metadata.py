@@ -31,3 +31,4 @@ class Metadata:
         elif self.metadata["provider"] == "AZURE":
             self.metadata["id"] = self.response_metadata["compute"]["name"]
             self.metadata["region"] = self.response_metadata["compute"]["location"]
+            self.metadata["group"] = self.response_metadata["compute"]["resourceGroupName"]
