@@ -63,3 +63,4 @@ except Exception as e:
 if args.stop:
     logger.info("Send stop notify")
     response = requests.post(config["stop_url"], json.dumps(metadata), headers={'content-type': 'application/json'})
+    logger.info(response)
