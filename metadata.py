@@ -3,7 +3,8 @@ import requests
 
 class Metadata:
     PROVIDER_APIS = {"AWS": "http://169.254.169.254/latest/dynamic/instance-identity/document",
-                     "AZURE": "http://169.254.169.254/metadata/instance?api-version=2019-06-01"}
+                     "AZURE": "http://169.254.169.254/metadata/instance?api-version=2019-06-01",
+                     "GCP": "http://metadata.google.internal/computeMetadata/v1/instance/?recursive=true"}
 
     def __init__(self):
         self.response_metadata = None
@@ -14,7 +15,7 @@ class Metadata:
 
     def get_provider(self):
         for provider in self.PROVIDER_APIS:
-            req = requests.get(self.PROVIDER_APIS[provider], headers={'Metadata': 'true'})
+            req = requests.get(self.PROVIDER_APIS[provider], headers={'Metadata': 'true', 'Metadata-Flavor': 'Google'})
             if req.status_code == 200:
                 self.response_metadata = req.json()
                 print(self.response_metadata)
@@ -32,3 +33,9 @@ class Metadata:
             self.metadata["id"] = self.response_metadata["compute"]["name"]
             self.metadata["region"] = self.response_metadata["compute"]["location"]
             self.metadata["group"] = self.response_metadata["compute"]["resourceGroupName"]
+        elif self.metadata["provider"] == "GCP":
+            self.metadata["id"] = self.response_metadata["name"]
+            zone = self.response_metadata["zone"]
+            type = self.response_metadata["machineType"]
+            self.metadata["zone"] = zone[zone.rfind("/")+1:]
+            self.metadata["type"] = type[type.rfind("/")+1:]
