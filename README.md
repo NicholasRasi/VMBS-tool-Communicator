@@ -1,4 +1,5 @@
-# cloud-benchmark-tools
-Provides a set of tools to manage a VM instance.
-- send benchmark data to remote API
-- power off VM (or deallocate)
+# Cloud Performance - Performer - Tools
+Small integration tool that:
+- reads the instance metadata from the provider API
+- sends the benchmark results to the remote database
+- sends the "done" signal to the director afterwards
